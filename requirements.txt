@@ -1,0 +1,4 @@
+websocket-client==0.57.0
+websocket==0.2.1
+gevent==1.4.0
+kafka-python==2.0.1
