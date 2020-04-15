@@ -1,3 +1,5 @@
+from typing import List
+
 from handler.InfoHandler import Instrument
 from storage.Storage import Storage
 
@@ -7,7 +9,7 @@ class InfoStorage(Storage):
     def __init__(self):
         self._instruments = dict()
 
-    def save(self, instruments: list()):
+    def save(self, instruments: List[Instrument]):
         for instrument in instruments:
             self._instruments[instrument.code] = instrument
 
