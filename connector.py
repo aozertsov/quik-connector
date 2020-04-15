@@ -4,9 +4,11 @@ import Config
 from WebQuikConnector import WebQuikConnector
 from handler.CandleHandler import CandleHandler
 from handler.CupHandler import CupHandler
+from handler.InfoHandler import InfoHandler
 from handler.TickerHandler import TickerHandler
 from storage.CandleStorage import CandleStorage
 from storage.CupStorage import CupStorage
+from storage.InfoStorage import InfoStorage
 from storage.TickerStorage import TickerStorage
 
 connector = WebQuikConnector(url=Config.URL, login=Config.LOGIN, password=Config.PASSWORD)
@@ -20,10 +22,12 @@ def main():
     ticker = TickerHandler(ticker_storage)
     plotter = CandleHandler(candle_storage)
     cup_handler = CupHandler(cup_storage)
+    info_handler = InfoHandler(InfoStorage())
 
     connector.add_handler(plotter)
     connector.add_handler(cup_handler)
     connector.add_handler(ticker)
+    connector.add_handler(info_handler)
     connector.start()
 
     connector.ask_bottle('SBER')
