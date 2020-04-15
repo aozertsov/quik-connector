@@ -14,5 +14,5 @@ class InfoStorage(Storage):
     def flush(self):
         pass
 
-    def getInfo(self, code: str):
+    def get_info(self, code: str):
         return self._instruments[code]
