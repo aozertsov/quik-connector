@@ -9,7 +9,7 @@ class CandleHandler(Handler):
     """
 
     def __init__(self, storage: Storage):
-        super(CandleHandler, self).__init__(21016)
+        super(CandleHandler, self).__init__([21016])
         self._storage = CandleStorage("/home/alexander/Documents/arqaconnector/data")
 
     def _handle(self, json_msg):

@@ -8,7 +8,7 @@ class CupHandler(Handler):
     """
 
     def __init__(self, storage: Storage):
-        super(CupHandler, self).__init__(21014)
+        super(CupHandler, self).__init__([21014])
         self._storage = storage
 
     def _handle(self, json_msg):

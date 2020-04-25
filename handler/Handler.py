@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 
 class Handler(ABC):
@@ -6,18 +7,18 @@ class Handler(ABC):
     Abstract method describe logic of handling messages from quik server
     """
 
-    __message_id = 0
+    __message_ids = []
 
-    def __init__(self, message_id):
-        self.__message_id = message_id
+    def __init__(self, message_ids: List[int]):
+        self.__message_ids = message_ids
 
     def handle(self, json_msg):
-        if json_msg['msgid'] == self.__message_id:
+        if self.__message_ids and json_msg['msgid'] in self.__message_ids:
             self._handle(json_msg)
 
     @property
-    def message_id(self):
-        return self.__message_id
+    def message_ids(self):
+        return self.__message_ids
 
     @abstractmethod
     def _handle(self, json_msg):

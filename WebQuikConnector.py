@@ -6,7 +6,7 @@ import time
 
 
 class WebQuikConnector:
-    _handlers = []
+    _handlers = {}
 
     def __init__(self, url, login, password):
 
@@ -55,8 +55,11 @@ class WebQuikConnector:
         strmsg = raw_msg.decode()
         msg = json.loads(strmsg)
 
-        for handler in self._handlers:
-            handler.handle(msg)
+        print(msg)
+
+        if self._handlers.get(msg['msgid']):
+            for handler in self._handlers[msg['msgid']]:
+                handler.handle(msg)
 
     def _on_close(self):
         print('connection closed')
@@ -86,7 +89,11 @@ class WebQuikConnector:
         self._ws.send(json.dumps(message))
 
     def add_handler(self, handler):
-        self._handlers.append(handler)
+        for msg_id in handler.message_ids:
+            if self._handlers.get(msg_id):
+                self._handlers[msg_id].append(handler)
+            else:
+                self._handlers[msg_id] = [handler]
 
     #region Common requests
     def ask_bottle(self, scode, depth=15):

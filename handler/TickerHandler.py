@@ -9,7 +9,7 @@ class TickerHandler(Handler):
     """
 
     def __init__(self, storage: Storage):
-        super(TickerHandler, self).__init__(21011)
+        super(TickerHandler, self).__init__([21011])
         self._dict = {}
         self._storage = storage
 
