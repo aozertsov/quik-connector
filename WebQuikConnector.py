@@ -8,17 +8,22 @@ import time
 class WebQuikConnector:
     _handlers = {}
 
-    def __init__(self, url, login, password):
+    def __init__(self, url, login, password, version, origin):
 
         self._conn = url
         self._password = password
         self._login = login
+        self._version = version
+        self._origin = origin
         self._ws = websocket.WebSocketApp(self._conn,
+                                          subprotocols=["dumb-increment-protocol"],
+                                          header={
+                                              "Sec-WebSocket-Extensions": "permessage-deflate; client_max_window_bits"},
                                           on_close=self._on_close,
                                           on_open=self._on_socket_open,
                                           on_message=self._on_message,
                                           on_error=self._on_error)
-        self._t = _Thread(target=self._ws.run_forever)
+        self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin})
         self._t.daemon = True
         self._thread_for_ping = _Thread(target=self.__quik_run_forever)
         self._thread_for_ping.daemon = True
@@ -28,14 +33,15 @@ class WebQuikConnector:
         while not ticker.wait(3):
             self._on_ping()
 
-    #region socket standart funs
+    #region socket standard funs
     def _on_error(self, error):
         self._ws = websocket.WebSocketApp(self._conn,
                                           on_close=self._on_close,
                                           on_open=self._on_socket_open,
                                           on_message=self._on_message,
                                           on_error=self._on_error)
-        self._t = _Thread(target=self._ws.run_forever, kwargs={"ping_interval": 3, "ping_timeout": 2})
+        self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin,
+                                                               "ping_interval": 3, "ping_timeout": 2})
         self._t.start()
 
         print("startend")
@@ -70,12 +76,16 @@ class WebQuikConnector:
             "msgid": 10000,
             "login": self._login,
             "password": self._password,
-            "app_type": "WEB",
-            "version": "7.2.0",
-            "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0",
+            "classes": [],
             "btc": "true",
+            "app_type": "WEB",
+            "version": self._version,
+            "userAgent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:71.0) Gecko/20100101 Firefox/71.0",
             "height": "498",
-            "width": "1920"
+            "width": "1920",
+            # "compressed": "deflate", Do not uncomment this line to prevent problems with message encoding
+            "sid": "bf71",
+            "ccodeOnDepo": "false"
         }
         self._ws.send(json.dumps(request))
     #endregion

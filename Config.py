@@ -1,3 +1,6 @@
 LOGIN = 'U0160319'
 PASSWORD = '02037'
-URL = 'wss://junior.webquik.ru:443/quik'
+HOST = 'junior.webquik.ru'
+ORIGIN = 'https://' + HOST
+WSS = 'wss://' + HOST + '/quik'
+QUIK_VERSION = '7.6.1'

@@ -11,7 +11,11 @@ from storage.CupStorage import CupStorage
 from storage.InfoStorage import InfoStorage
 from storage.TickerStorage import TickerStorage
 
-connector = WebQuikConnector(url=Config.URL, login=Config.LOGIN, password=Config.PASSWORD)
+connector = WebQuikConnector(url=Config.WSS,
+                             login=Config.LOGIN,
+                             password=Config.PASSWORD,
+                             version=Config.QUIK_VERSION,
+                             origin=Config.ORIGIN)
 
 
 def main():
