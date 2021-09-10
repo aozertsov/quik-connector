@@ -34,7 +34,7 @@ class WebQuikConnector:
             self._on_ping()
 
     #region socket standard funs
-    def _on_error(self, error):
+    def _on_error(self, wsapp, error):
         self._ws = websocket.WebSocketApp(self._conn,
                                           on_close=self._on_close,
                                           on_open=self._on_socket_open,
@@ -54,7 +54,7 @@ class WebQuikConnector:
         }
         self._ws.send(json.dumps(request))
 
-    def _on_message(self, raw_msg):
+    def _on_message(self, wsapp, raw_msg):
         """
         Entry for message processing. Call specific processors for different messages.
         """
@@ -67,10 +67,10 @@ class WebQuikConnector:
             for handler in self._handlers[msg['msgid']]:
                 handler.handle(msg)
 
-    def _on_close(self):
+    def _on_close(self, wsapp, close_status_code, close_msg):
         print('connection closed')
 
-    def _on_socket_open(self):
+    def _on_socket_open(self, ws):
         print("startup")
         request = {
             "msgid": 10000,
