@@ -1,3 +1,4 @@
+from MsgId import MsgId
 from handler.Handler import Handler
 from storage import Storage
 
@@ -8,7 +9,7 @@ class CupHandler(Handler):
     """
 
     def __init__(self, storage: Storage):
-        super(CupHandler, self).__init__([21014])
+        super(CupHandler, self).__init__([MsgId.CUP])
         self._storage = storage
 
     def _handle(self, json_msg):

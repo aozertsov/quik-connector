@@ -1,6 +1,6 @@
+from MsgId import MsgId
 from handler.Handler import Handler
 from storage import Storage
-from storage.TickerStorage import TickerStorage
 
 
 class TickerHandler(Handler):
@@ -9,7 +9,7 @@ class TickerHandler(Handler):
     """
 
     def __init__(self, storage: Storage):
-        super(TickerHandler, self).__init__([21011])
+        super(TickerHandler, self).__init__([MsgId.TICKER])
         self._dict = {}
         self._storage = storage
 
