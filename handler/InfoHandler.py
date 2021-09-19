@@ -1,4 +1,4 @@
-import MsgId
+from MsgId import MsgId
 from handler.Handler import Handler
 from storage import Storage
 
