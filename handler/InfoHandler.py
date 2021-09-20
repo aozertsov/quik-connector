@@ -9,7 +9,7 @@ class InfoHandler(Handler):
         super(InfoHandler, self).__init__([MsgId.SESSION_OPEN])
         self._storage = storage
 
-    def _handle(self, json_msg):
+    def _handle(self, wsapp, json_msg):
         for clazz in json_msg['classList']:
             if (clazz['ccode']) == 'QJSIM':
                 instruments = list(

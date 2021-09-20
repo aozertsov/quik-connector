@@ -65,7 +65,7 @@ class WebQuikConnector:
 
         if self._handlers.get(msg['msgid']):
             for handler in self._handlers[msg['msgid']]:
-                handler.handle(msg)
+                handler.handle(wsapp, msg)
 
     def _on_close(self, wsapp, close_status_code, close_msg):
         print('connection closed')

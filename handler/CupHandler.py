@@ -12,7 +12,7 @@ class CupHandler(Handler):
         super(CupHandler, self).__init__([MsgId.CUP])
         self._storage = storage
 
-    def _handle(self, json_msg):
+    def _handle(self, wsapp, json_msg):
         for (k, v) in json_msg['quotes'].items():
             if not v == {}:
                 self._storage.save((k, v))

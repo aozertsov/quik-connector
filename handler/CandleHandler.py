@@ -12,6 +12,6 @@ class CandleHandler(Handler):
         super(CandleHandler, self).__init__([MsgId.GRAPH])
         self._storage = storage
 
-    def _handle(self, json_msg):
+    def _handle(self, wsapp, json_msg):
         graphs = json_msg['graph']
         self._storage.save(graphs)

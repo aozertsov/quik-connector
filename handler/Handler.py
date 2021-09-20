@@ -12,14 +12,14 @@ class Handler(ABC):
     def __init__(self, message_ids: List[int]):
         self.__message_ids = message_ids
 
-    def handle(self, json_msg):
+    def handle(self, wsapp, json_msg):
         if self.__message_ids and json_msg['msgid'] in self.__message_ids:
-            self._handle(json_msg)
+            self._handle(wsapp, json_msg)
 
     @property
     def message_ids(self):
         return self.__message_ids
 
     @abstractmethod
-    def _handle(self, json_msg):
+    def _handle(self, wsapp, json_msg):
         pass

@@ -13,5 +13,5 @@ class TickerHandler(Handler):
         self._dict = {}
         self._storage = storage
 
-    def _handle(self, json_msg):
+    def _handle(self, wsapp, json_msg):
         self._storage.save(json_msg['dataResult'])
