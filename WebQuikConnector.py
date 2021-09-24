@@ -35,24 +35,8 @@ class WebQuikConnector:
 
     #region socket standard funs
     def _on_error(self, wsapp, error):
-        self._ws = websocket.WebSocketApp(self._conn,
-                                          on_close=self._on_close,
-                                          on_open=self._on_socket_open,
-                                          on_message=self._on_message,
-                                          on_error=self._on_error)
-        self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin,
-                                                               "ping_interval": 3, "ping_timeout": 2})
-        self._t.start()
-
         print("startend")
         print(type(error))
-        print(error)
-
-    def _on_ping(self):
-        request = {
-            "msgid": 10008,
-        }
-        self._ws.send(json.dumps(request))
 
     def _on_message(self, wsapp, raw_msg):
         """
