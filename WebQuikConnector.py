@@ -1,8 +1,7 @@
-from threading import Event
 from threading import Thread as _Thread
+from MsgId import MsgId
 import websocket
 import json
-import time
 
 
 class WebQuikConnector:
@@ -15,6 +14,9 @@ class WebQuikConnector:
         self._login = login
         self._version = version
         self._origin = origin
+        self.__prepare_ws()
+
+    def __prepare_ws(self):
         self._ws = websocket.WebSocketApp(self._conn,
                                           subprotocols=["dumb-increment-protocol"],
                                           header={
@@ -22,16 +24,11 @@ class WebQuikConnector:
                                           on_close=self._on_close,
                                           on_open=self._on_socket_open,
                                           on_message=self._on_message,
-                                          on_error=self._on_error)
-        self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin})
+                                          on_error=self._on_error,
+                                          on_pong=self._on_pong,
+                                          on_ping=self._on_ping)
+        self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin, "ping_interval": 6})
         self._t.daemon = True
-        self._thread_for_ping = _Thread(target=self.__quik_run_forever)
-        self._thread_for_ping.daemon = True
-
-    def __quik_run_forever(self):
-        ticker = Event()
-        while not ticker.wait(3):
-            self._on_ping()
 
     #region socket standard funs
     def _on_error(self, wsapp, error):
@@ -51,6 +48,14 @@ class WebQuikConnector:
 
     def _on_close(self, wsapp, close_status_code, close_msg):
         print('connection closed')
+
+    def _on_pong(self, wsapp, message):
+        request = {"msgid": MsgId.ACTIVITY}
+        self._ws.send(json.dumps(request))
+
+    def _on_ping(self, wsapp, message):
+        print(message)
+        print("Got a ping! A pong reply has already been automatically sent.")
 
     def _on_socket_open(self, ws):
         print("startup")
@@ -74,8 +79,6 @@ class WebQuikConnector:
 
     def start(self):
         self._t.start()
-        time.sleep(10)
-        self._thread_for_ping.start()
 
     def send_message(self, message):
         self._ws.send(json.dumps(message))

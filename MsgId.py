@@ -1,5 +1,6 @@
 class MsgId:
     SESSION_OPEN = 20000
+    ACTIVITY = 10008
     ORDER_ANSWER = 21001
     TICKER = 21011
     CUP = 21014
