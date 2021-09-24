@@ -45,8 +45,6 @@ class WebQuikConnector:
         strmsg = raw_msg.decode()
         msg = json.loads(strmsg)
 
-        print(msg)
-
         if self._handlers.get(msg['msgid']):
             for handler in self._handlers[msg['msgid']]:
                 handler.handle(wsapp, msg)
