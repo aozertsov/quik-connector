@@ -6,8 +6,9 @@ from storage.KafkaStorage import KafkaStorage
 
 class CandleStorage(KafkaStorage):
 
-    def __init__(self, bootstrap_servers = 'localhost:29092'):
-        super(CandleStorage, self).__init__(bootstrap_servers = bootstrap_servers, value_serializer = lambda x: str(x).encode())
+    def __init__(self, bootstrap_servers='localhost:29092'):
+        super(CandleStorage, self).__init__(bootstrap_servers=bootstrap_servers,
+                                            value_serializer=lambda x: str(x).encode())
         self._last_candle_date = dict()
         self._dict = dict()
         self._counter = dict()

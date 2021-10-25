@@ -9,8 +9,8 @@ class CupStorage(KafkaStorage):
     def flush(self):
         pass
 
-    def __init__(self, bootstrap_servers = 'localhost:9092'):
-        super(CupStorage, self).__init__(bootstrap_servers, value_serializer = lambda x: str(x).encode())
+    def __init__(self, bootstrap_servers='localhost:9092'):
+        super(CupStorage, self).__init__(bootstrap_servers, value_serializer=lambda x: str(x).encode())
         self._cup_storage = dict()
 
     def save(self, kvp):
