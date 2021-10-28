@@ -1,3 +1,4 @@
+import time
 from threading import Thread as _Thread
 from MsgId import MsgId
 import websocket
@@ -80,6 +81,7 @@ class WebQuikConnector:
 
     def start(self):
         self._t.start()
+        time.sleep(10)
 
     def send_message(self, message):
         log.info(f'message {message} sent')
