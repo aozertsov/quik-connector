@@ -4,6 +4,9 @@ from kafka import KafkaProducer
 
 from model.Tick import Tick
 from storage.KafkaStorage import KafkaStorage
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class TickerStorage(KafkaStorage):
@@ -18,7 +21,7 @@ class TickerStorage(KafkaStorage):
             try:
                 self._producer.send("ticker", key=k, value=self._dict[k])
             except Exception as e:
-                print(e)
+                log.error(e, exc_info=True)
 
     def flush(self):
         pass

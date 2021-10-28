@@ -2,6 +2,9 @@ from threading import Thread as _Thread
 from MsgId import MsgId
 import websocket
 import json
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class WebQuikConnector:
@@ -30,10 +33,9 @@ class WebQuikConnector:
         self._t = _Thread(target=self._ws.run_forever, kwargs={"origin": self._origin, "ping_interval": 6})
         self._t.daemon = True
 
-    #region socket standard funs
+    # region socket standard funs
     def _on_error(self, wsapp, error):
-        print("startend")
-        print(type(error))
+        log.error("Got Error: {}".format(error), exc_info=True)
 
     def _on_message(self, wsapp, raw_msg):
         """
@@ -47,18 +49,17 @@ class WebQuikConnector:
                 handler.handle(wsapp, msg)
 
     def _on_close(self, wsapp, close_status_code, close_msg):
-        print('connection closed')
+        log.warning("Connection closed with message: {}".format(close_msg))
 
     def _on_pong(self, wsapp, message):
         request = {"msgid": MsgId.ACTIVITY}
         self._ws.send(json.dumps(request))
 
     def _on_ping(self, wsapp, message):
-        print(message)
-        print("Got a ping! A pong reply has already been automatically sent.")
+        log.info("Got a ping! Message: {}".format(message))
 
     def _on_socket_open(self, ws):
-        print("startup")
+        log.info("Socket connection opening")
         request = {
             "msgid": 10000,
             "login": self._login,
@@ -75,12 +76,13 @@ class WebQuikConnector:
             "ccodeOnDepo": "false"
         }
         self._ws.send(json.dumps(request))
-    #endregion
+    # endregion
 
     def start(self):
         self._t.start()
 
     def send_message(self, message):
+        log.info(f'message {message} sent')
         self._ws.send(json.dumps(message))
 
     def add_handler(self, handler):
@@ -128,4 +130,4 @@ class WebQuikConnector:
             "p": interval
         }
         self.send_message(request)
-    #endregion
+    # endregion

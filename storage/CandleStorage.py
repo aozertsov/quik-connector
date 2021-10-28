@@ -2,6 +2,9 @@ from datetime import datetime
 
 from model.Candle import Candle
 from storage.KafkaStorage import KafkaStorage
+import logging
+
+log = logging.getLogger(__name__)
 
 
 class CandleStorage(KafkaStorage):
@@ -32,4 +35,4 @@ class CandleStorage(KafkaStorage):
                 try:
                     self._producer.send("candle", key=instrument, value=value)
                 except Exception as e:
-                    print(e)
+                    log.error(e, exc_info=True)

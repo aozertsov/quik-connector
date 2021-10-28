@@ -43,4 +43,8 @@ def main():
 
 
 if __name__ == '__main__':
+    import logging
+
+    logging.basicConfig(filename='application.log', format='%(asctime)s: %(name)s - %(levelname)s - %(message)s',
+                        level=logging.INFO)
     main()
