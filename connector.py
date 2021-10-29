@@ -19,9 +19,9 @@ connector = WebQuikConnector(url=Config.WSS,
 
 
 def main():
-    cup_storage = CupStorage()
-    ticker_storage = TickerStorage()
-    candle_storage = CandleStorage()
+    cup_storage = CupStorage(bootstrap_servers='kafka-server1:29092')
+    ticker_storage = TickerStorage(bootstrap_servers='kafka-server1:29092')
+    candle_storage = CandleStorage(bootstrap_servers='kafka-server1:29092')
 
     ticker = TickerHandler(ticker_storage)
     plotter = CandleHandler(candle_storage)
