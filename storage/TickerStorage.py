@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 class TickerStorage(KafkaStorage):
 
-    def __init__(self, bootstrap_servers = 'localhost:9092'):
+    def __init__(self, bootstrap_servers='localhost:9092'):
         super(TickerStorage, self).__init__(bootstrap_servers, value_serializer = lambda x: str(x).encode())
         self._dict = dict()
 
