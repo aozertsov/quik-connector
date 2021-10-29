@@ -17,13 +17,22 @@ services:
       ALLOW_PLAINTEXT_LISTENER: "yes"
       KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
       KAFKA_CFG_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_CFG_LISTENERS: "PLAINTEXT://:9092,PLAINTEXT_HOST://:29092"
-      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,PLAINTEXT_HOST://localhost:29092"
+      KAFKA_CFG_LISTENERS: "PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://:29092"
+      KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://localhost:9092,PLAINTEXT_HOST://kafka-server1:29092"
       KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "true"
     networks:
       - kafka-network
     depends_on:
       - zookeeper
+  connector:
+    build: .
+    deploy:
+      restart_policy:
+        condition: any
+    depends_on:
+      - kafka-server1
+    networks:
+      - kafka-network
 
 networks:
   kafka-network:
