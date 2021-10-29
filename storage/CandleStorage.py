@@ -9,7 +9,7 @@ log = logging.getLogger(__name__)
 
 class CandleStorage(KafkaStorage):
 
-    def __init__(self, bootstrap_servers='localhost:29092'):
+    def __init__(self, bootstrap_servers='localhost:9092'):
         super(CandleStorage, self).__init__(bootstrap_servers=bootstrap_servers,
                                             value_serializer=lambda x: str(x).encode())
         self._last_candle_date = dict()
