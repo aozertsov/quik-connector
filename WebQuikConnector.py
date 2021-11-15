@@ -1,5 +1,5 @@
-import time
 from enum import Enum
+from functools import wraps
 from threading import Thread as _Thread
 
 from websocket import WebSocketConnectionClosedException
@@ -108,6 +108,19 @@ class WebQuikConnector:
 
     # endregion
 
+    def __check_state(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            log.info('Inside a wrapper')
+            while self._status != self.Status.INITIALIZED:
+                pass
+            log.info(self._status)
+            log.info(args)
+            log.info(kwargs)
+            return func(self, *args, **kwargs)
+
+        return wrapper
+
     def _on_trade_session_open(self, msg):
         """
         Trade session is opened. Now we can request data and set orders
@@ -140,6 +153,7 @@ class WebQuikConnector:
                 self._handlers[msg_id] = [handler]
 
     # region Common requests
+    @__check_state
     def ask_bottle(self, scode, depth=15):
         request = {
             "msgid": 11014,
