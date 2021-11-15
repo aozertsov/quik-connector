@@ -1,6 +1,9 @@
 import time
 from enum import Enum
 from threading import Thread as _Thread
+
+from websocket import WebSocketConnectionClosedException
+
 from MsgId import MsgId
 import websocket
 import json
@@ -27,6 +30,11 @@ class WebQuikConnector:
         self._login = login
         self._version = version
         self._origin = origin
+        self._status = self.Status.DISCONNECTED
+        self._callbacks = {
+            MsgId.TRADE_SESSION_OPEN: self._on_trade_session_open,
+            MsgId.CLASSES_SENT: self._on_classes_sent,
+        }
         self.__prepare_ws()
 
     def __prepare_ws(self):
@@ -53,6 +61,12 @@ class WebQuikConnector:
         """
         strmsg = raw_msg.decode()
         msg = json.loads(strmsg)
+
+        # Call internal callback is set up
+        msg_callback = self._callbacks.get(msg['msgid'])
+        if msg_callback:
+            # Don't send msg to consumers, process it in this class
+            msg_callback(msg)
 
         if self._handlers.get(msg['msgid']):
             for handler in self._handlers[msg['msgid']]:
@@ -85,12 +99,34 @@ class WebQuikConnector:
             "sid": "bf71",
             "ccodeOnDepo": "false"
         }
-        self._ws.send(json.dumps(request))
+        try:
+            self._ws.send(json.dumps(request))
+        except WebSocketConnectionClosedException as cce:
+            log.error(f'Connection closed with exception: {cce}')
+            self._status = self.Status.DISCONNECTED
+            raise cce
+
     # endregion
 
+    def _on_trade_session_open(self, msg):
+        """
+        Trade session is opened. Now we can request data and set orders
+        """
+        if msg['resultCode'] == 0:
+            log.info('Authenticated')
+            self._status = WebQuikConnector.Status.INITIALIZING
+            log.info('Connected. Trade session is opened')
+        else:
+            # Not opened, failure failed
+            self._status = WebQuikConnector.Status.DISCONNECTED
+            raise ConnectionError('Trade session opening failure: %s' % msg)
+
+    def _on_classes_sent(self, msg):
+        self._status = WebQuikConnector.Status.INITIALIZED
+
     def start(self):
+        self._status = self.Status.CONNECTING
         self._t.start()
-        time.sleep(10)
 
     def send_message(self, message):
         log.info(f'message {message} sent')
@@ -103,7 +139,7 @@ class WebQuikConnector:
             else:
                 self._handlers[msg_id] = [handler]
 
-    #region Common requests
+    # region Common requests
     def ask_bottle(self, scode, depth=15):
         request = {
             "msgid": 11014,
