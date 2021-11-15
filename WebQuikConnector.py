@@ -1,4 +1,5 @@
 import time
+from enum import Enum
 from threading import Thread as _Thread
 from MsgId import MsgId
 import websocket
@@ -10,6 +11,14 @@ log = logging.getLogger(__name__)
 
 class WebQuikConnector:
     _handlers = {}
+
+    class Status(Enum):
+        CONNECTING = 0
+        INITIALIZING = 1
+        INITIALIZED = 2
+        BUSY = 3
+        DISCONNECTING = 4
+        DISCONNECTED = 5
 
     def __init__(self, url, login, password, version, origin):
 
